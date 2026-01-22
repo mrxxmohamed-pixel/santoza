@@ -89,6 +89,18 @@ const productImageInput = document.getElementById("productImageFile");
 const logoInput = document.getElementById("logoInput");
 const brandLogo = document.getElementById("brandLogo");
 const logoFallback = document.getElementById("logoFallback");
+const detailsPanel = document.getElementById("productDetails");
+const detailsClose = document.getElementById("detailsClose");
+const detailsBackBtn = document.getElementById("detailsBackBtn");
+const detailsImage = document.getElementById("detailsImage");
+const detailsImageFallback = document.getElementById("detailsImageFallback");
+const detailsName = document.getElementById("detailsName");
+const detailsDescription = document.getElementById("detailsDescription");
+const detailsCode = document.getElementById("detailsCode");
+const detailsPriceTry = document.getElementById("detailsPriceTry");
+const detailsPriceSyp = document.getElementById("detailsPriceSyp");
+const detailsOrderBtn = document.getElementById("detailsOrderBtn");
+const detailsList = document.getElementById("detailsList");
 
 let products = loadProducts();
 let showAll = false;
@@ -167,6 +179,88 @@ function buildOrderMessage(product) {
   return lines.join("\n");
 }
 
+function buildDetailLines(product) {
+  const lines = [
+    "الحد الأدنى للطلب يتم تحديده عند التأكيد.",
+    "التغليف متوفر بعلب أو كراتين حسب الكمية.",
+    "التخزين: مكان بارد وجاف بعيد عن أشعة الشمس.",
+    "تأكيد التوفر والتسليم خلال دقائق عبر واتساب.",
+  ];
+
+  if (product.priceTry || product.priceSyp) {
+    lines.unshift("الأسعار المعروضة قابلة للتحديث حسب الكمية.");
+  } else {
+    lines.unshift("السعر يعتمد على الكمية والموسم.");
+  }
+
+  return lines;
+}
+
+function updateDetailsImage(product) {
+  if (!detailsImage || !detailsImageFallback) return;
+
+  if (product.image) {
+    detailsImage.src = product.image;
+    detailsImage.alt = product.name ? `صورة ${product.name}` : "صورة المنتج";
+    detailsImage.style.display = "block";
+    detailsImageFallback.style.display = "none";
+  } else {
+    detailsImage.removeAttribute("src");
+    detailsImage.alt = "";
+    detailsImage.style.display = "none";
+    detailsImageFallback.style.display = "grid";
+  }
+}
+
+function openProductDetails(product) {
+  if (!detailsPanel) return;
+
+  updateDetailsImage(product);
+  if (detailsName) {
+    detailsName.textContent = product.name || "منتج";
+  }
+  if (detailsDescription) {
+    detailsDescription.textContent = product.description || "وصف مختصر متاح عند الطلب.";
+  }
+  if (detailsCode) {
+    detailsCode.textContent = product.code ? `رقم المنتج: ${product.code}` : "رقم المنتج غير متوفر";
+  }
+  if (detailsPriceTry) {
+    detailsPriceTry.textContent = product.priceTry ? `${product.priceTry} ل.ت` : "السعر حسب الطلب";
+  }
+  if (detailsPriceSyp) {
+    if (product.priceSyp) {
+      detailsPriceSyp.textContent = `${product.priceSyp} ل.س`;
+      detailsPriceSyp.style.display = "inline-flex";
+    } else {
+      detailsPriceSyp.textContent = "";
+      detailsPriceSyp.style.display = "none";
+    }
+  }
+  if (detailsOrderBtn) {
+    detailsOrderBtn.href = buildWhatsAppLink(buildOrderMessage(product));
+  }
+  if (detailsList) {
+    detailsList.innerHTML = "";
+    buildDetailLines(product).forEach((line) => {
+      const item = document.createElement("li");
+      item.textContent = line;
+      detailsList.appendChild(item);
+    });
+  }
+
+  detailsPanel.classList.remove("hidden");
+  detailsPanel.setAttribute("aria-hidden", "false");
+  document.body.classList.add("details-open");
+}
+
+function closeProductDetails() {
+  if (!detailsPanel) return;
+  detailsPanel.classList.add("hidden");
+  detailsPanel.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("details-open");
+}
+
 function createCard(product, index) {
   const card = document.createElement("article");
   card.className = "product-card";
@@ -228,10 +322,22 @@ function createCard(product, index) {
   orderBtn.target = "_blank";
   orderBtn.rel = "noopener";
 
+  const detailsBtn = document.createElement("button");
+  detailsBtn.type = "button";
+  detailsBtn.className = "btn btn-ghost";
+  detailsBtn.textContent = "تفاصيل المنتج";
+  detailsBtn.dataset.action = "view-details";
+  detailsBtn.dataset.code = product.code;
+
+  const actions = document.createElement("div");
+  actions.className = "product-actions";
+  actions.appendChild(orderBtn);
+  actions.appendChild(detailsBtn);
+
   card.appendChild(image);
   card.appendChild(info);
   card.appendChild(meta);
-  card.appendChild(orderBtn);
+  card.appendChild(actions);
 
   return card;
 }
@@ -316,6 +422,40 @@ adminClose.addEventListener("click", closeAdminPanel);
 showMoreBtn.addEventListener("click", () => {
   showAll = true;
   renderProducts();
+});
+
+productGrid.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-action='view-details']");
+  if (!button) return;
+
+  const code = button.dataset.code;
+  if (!code) return;
+
+  const product = products.find((item) => item.code === code);
+  if (!product) return;
+  openProductDetails(product);
+});
+
+if (detailsClose) {
+  detailsClose.addEventListener("click", closeProductDetails);
+}
+
+if (detailsBackBtn) {
+  detailsBackBtn.addEventListener("click", closeProductDetails);
+}
+
+if (detailsPanel) {
+  detailsPanel.addEventListener("click", (event) => {
+    if (event.target === detailsPanel) {
+      closeProductDetails();
+    }
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && detailsPanel && !detailsPanel.classList.contains("hidden")) {
+    closeProductDetails();
+  }
 });
 
 productForm.addEventListener("submit", (event) => {

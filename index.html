@@ -6,7 +6,7 @@
   <title>SANTOZA | تجارة وتوزيع السكاكر والشوكولا</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Cinzel+Decorative:wght@700&family=El+Messiri:wght@500;600;700&family=Playfair+Display:wght@600;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Changa:wght@400;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -39,6 +39,37 @@
       </div>
     </section>
 
+    <section class="process" id="how-it-works">
+      <div class="section-head">
+        <div>
+          <h2>خطوات الطلب والتسليم</h2>
+          <p>عملية واضحة وسريعة، من اختيار المنتج حتى استلام الشحنة.</p>
+        </div>
+      </div>
+      <div class="process-steps">
+        <div class="step-card">
+          <span class="step-number">01</span>
+          <h3>اختيار المنتجات</h3>
+          <p>تصفح القائمة أو اطلب اقتراحات تناسب نوع متجرِك والعملاء المستهدفين.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-number">02</span>
+          <h3>إرسال الطلب عبر واتساب</h3>
+          <p>حدد الكميات المطلوبة، وسنعود لك بتأكيد التوفر وخيارات التسليم.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-number">03</span>
+          <h3>تأكيد العرض والجدول</h3>
+          <p>نثبت الأسعار النهائية والوقت المتوقع للتجهيز والتوصيل.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-number">04</span>
+          <h3>تجهيز وتسليم الطلبية</h3>
+          <p>تغليف احترافي مع متابعة الشحنة حتى تصل بأفضل حالة.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="products" id="products">
       <div class="section-head">
         <div>
@@ -49,6 +80,85 @@
       </div>
       <div id="productGrid" class="product-grid"></div>
       <button id="showMoreBtn" class="btn btn-primary">عرض المزيد</button>
+    </section>
+
+    <section id="productDetails" class="product-details hidden" aria-hidden="true">
+      <div class="details-card">
+        <div class="details-header">
+          <p class="details-eyebrow">تفاصيل المنتج</p>
+          <button id="detailsClose" class="btn btn-ghost" type="button">إغلاق</button>
+        </div>
+        <div class="details-body">
+          <div class="details-image">
+            <img id="detailsImage" alt="" />
+            <span id="detailsImageFallback">SANTOZA</span>
+          </div>
+          <div class="details-content">
+            <h3 id="detailsName"></h3>
+            <p id="detailsDescription" class="details-description"></p>
+            <div class="details-meta">
+              <span id="detailsCode" class="details-chip"></span>
+              <span id="detailsPriceTry" class="details-chip details-price"></span>
+              <span id="detailsPriceSyp" class="details-chip details-price"></span>
+            </div>
+            <ul id="detailsList" class="details-list"></ul>
+            <div class="details-actions">
+              <a id="detailsOrderBtn" class="btn btn-primary" href="#" target="_blank" rel="noopener">اطلب عبر واتساب</a>
+              <button id="detailsBackBtn" class="btn btn-ghost" type="button">عودة للقائمة</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="insights" id="guides">
+      <div class="section-head">
+        <div>
+          <h2>إرشادات التخزين والجودة</h2>
+          <p>معلومات سريعة تساعدك على الحفاظ على جودة السكاكر والشوكولا.</p>
+        </div>
+      </div>
+      <div class="insight-grid">
+        <article class="insight-card">
+          <h3>نصائح التخزين</h3>
+          <ul>
+            <li>احفظ المنتجات في مكان بارد وجاف بعيداً عن أشعة الشمس المباشرة.</li>
+            <li>حافظ على درجة حرارة ثابتة لتجنب تغير القوام والنكهة.</li>
+            <li>اعتمد نظام تدوير المخزون لضمان بيع الدفعات الأقدم أولاً.</li>
+          </ul>
+        </article>
+        <article class="insight-card">
+          <h3>معايير الجودة</h3>
+          <ul>
+            <li>فحص سريع للتغليف قبل العرض لضمان سلامة المنتج.</li>
+            <li>تنسيق العرض داخل المتجر يحافظ على جاذبية المنتج.</li>
+            <li>التزام بمواعيد التسليم المتفق عليها لتسهيل التخطيط للمخزون.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="section-head">
+        <div>
+          <h2>أسئلة شائعة</h2>
+          <p>إجابات مختصرة على أكثر الاستفسارات تكراراً.</p>
+        </div>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>هل يمكن طلب كميات تجريبية؟</summary>
+          <p>نعم، نوفر كميات تجريبية حسب التوفر لتجربة المنتج قبل الطلبات الكبيرة.</p>
+        </details>
+        <details class="faq-item">
+          <summary>ما هي طرق الدفع المتاحة؟</summary>
+          <p>يتم تحديد طريقة الدفع عند تأكيد الطلب بحسب المنطقة ونوع التوريد.</p>
+        </details>
+        <details class="faq-item">
+          <summary>هل يوجد خدمة توصيل؟</summary>
+          <p>نوفر خيارات توصيل حسب جدول التوزيع، وسيتم تأكيدها أثناء الطلب.</p>
+        </details>
+      </div>
     </section>
 
     <section id="adminPanel" class="admin-panel hidden">
