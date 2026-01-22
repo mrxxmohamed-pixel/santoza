@@ -5,6 +5,7 @@ const STORAGE_KEYS = {
   whatsapp: "santoza_whatsapp",
   logo: "santoza_logo",
 };
+const memoryStore = {};
 
 const defaultProducts = [
   {
@@ -105,8 +106,26 @@ const detailsList = document.getElementById("detailsList");
 let products = loadProducts();
 let showAll = false;
 
+function safeGetItem(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    return memoryStore[key] || null;
+  }
+}
+
+function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    memoryStore[key] = value;
+    return false;
+  }
+}
+
 function loadProducts() {
-  const stored = localStorage.getItem(STORAGE_KEYS.products);
+  const stored = safeGetItem(STORAGE_KEYS.products);
   if (!stored) return defaultProducts;
   try {
     const parsed = JSON.parse(stored);
@@ -117,7 +136,7 @@ function loadProducts() {
 }
 
 function saveProducts() {
-  localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(products));
+  return safeSetItem(STORAGE_KEYS.products, JSON.stringify(products));
 }
 
 function sanitizeWhatsApp(value) {
@@ -125,7 +144,7 @@ function sanitizeWhatsApp(value) {
 }
 
 function getWhatsApp() {
-  const stored = localStorage.getItem(STORAGE_KEYS.whatsapp);
+  const stored = safeGetItem(STORAGE_KEYS.whatsapp);
   const cleaned = sanitizeWhatsApp(stored);
   return cleaned || "905551234567";
 }
@@ -133,7 +152,10 @@ function getWhatsApp() {
 function setWhatsApp(value) {
   const cleaned = sanitizeWhatsApp(value);
   const finalNumber = cleaned || "905551234567";
-  localStorage.setItem(STORAGE_KEYS.whatsapp, finalNumber);
+  const saved = safeSetItem(STORAGE_KEYS.whatsapp, finalNumber);
+  if (!saved) {
+    window.alert("تعذر حفظ رقم واتساب. حاول برقم أقصر أو امسح التخزين المحلي.");
+  }
   updateWhatsAppUI();
 }
 
@@ -401,10 +423,12 @@ function renderAdminProducts() {
 
 function openAdminPanel() {
   adminPanel.classList.remove("hidden");
+  document.body.classList.add("admin-open");
 }
 
 function closeAdminPanel() {
   adminPanel.classList.add("hidden");
+  document.body.classList.remove("admin-open");
 }
 
 adminToggle.addEventListener("click", () => {
@@ -489,7 +513,11 @@ productForm.addEventListener("submit", (event) => {
     };
 
     products.unshift(newProduct);
-    saveProducts();
+    if (!saveProducts()) {
+      products.shift();
+      window.alert("تعذر حفظ المنتج. حاول تقليل حجم الصورة أو امسح التخزين المحلي.");
+      return;
+    }
     showAll = products.length <= VISIBLE_LIMIT ? false : showAll;
     renderProducts();
     renderAdminProducts();
@@ -518,8 +546,12 @@ if (adminProductList) {
     const shouldDelete = window.confirm(`هل تريد حذف ${name}؟`);
     if (!shouldDelete) return;
 
-    products.splice(index, 1);
-    saveProducts();
+    const [removed] = products.splice(index, 1);
+    if (!saveProducts()) {
+      products.splice(index, 0, removed);
+      window.alert("تعذر حفظ الحذف. حاول مرة أخرى.");
+      return;
+    }
     renderProducts();
     renderAdminProducts();
   });
@@ -535,14 +567,18 @@ logoInput.addEventListener("change", () => {
 
   const reader = new FileReader();
   reader.onload = () => {
-    localStorage.setItem(STORAGE_KEYS.logo, reader.result);
+    const saved = safeSetItem(STORAGE_KEYS.logo, reader.result);
+    if (!saved) {
+      window.alert("تعذر حفظ الشعار. حاول استخدام صورة أصغر.");
+      return;
+    }
     loadLogo();
   };
   reader.readAsDataURL(file);
 });
 
 function loadLogo() {
-  const stored = localStorage.getItem(STORAGE_KEYS.logo);
+  const stored = safeGetItem(STORAGE_KEYS.logo);
   if (stored) {
     brandLogo.src = stored;
     brandLogo.style.display = "block";

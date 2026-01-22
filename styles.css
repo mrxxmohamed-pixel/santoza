@@ -708,6 +708,7 @@ body::before {
   z-index: 10;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  overscroll-behavior: contain;
 }
 
 .admin-panel.hidden {
@@ -725,6 +726,7 @@ body::before {
   z-index: 1000;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  overscroll-behavior: contain;
 }
 
 .product-details.hidden {
@@ -850,11 +852,18 @@ body.details-open {
   overflow: hidden;
 }
 
+body.admin-open {
+  overflow: hidden;
+}
+
 .admin-card {
   background: var(--surface-strong);
   border-radius: 24px 24px 14px 24px;
   padding: 24px;
   width: min(900px, 100%);
+  max-height: min(86vh, 760px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
   border-top: 4px solid var(--primary);
